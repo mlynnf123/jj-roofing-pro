@@ -1,0 +1,6 @@
+{
+  "name": "JJ Roofing Pros",
+  "description": "A React and Tailwind CSS application to manage roofing leads with an interactive Kanban board and AI-powered lead parsing using the Gemini API.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

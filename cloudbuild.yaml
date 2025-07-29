@@ -1,0 +1,44 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-west1-docker.pkg.dev/servicepro-crm/cloud-run-source-deploy/jj-roofing-pros:latest'
+      - '.'
+  
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-west1-docker.pkg.dev/servicepro-crm/cloud-run-source-deploy/jj-roofing-pros:latest'
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'jj-roofing-pros-app'
+      - '--image'
+      - 'us-west1-docker.pkg.dev/servicepro-crm/cloud-run-source-deploy/jj-roofing-pros:latest'
+      - '--region'
+      - 'us-west1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '3000'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '10'
+      - '--set-env-vars'
+      - 'NODE_ENV=production,API_KEY=AIzaSyD57cUMy1CGH1GwrMfjkLO3XGekdg01gWc'
+
+images:
+  - 'us-west1-docker.pkg.dev/servicepro-crm/cloud-run-source-deploy/jj-roofing-pros:latest'

@@ -1,0 +1,27 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files first
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code (avoiding hidden files)
+COPY app ./app
+COPY components ./components
+COPY lib ./lib
+COPY services ./services
+COPY *.ts ./
+COPY *.mjs ./
+COPY *.json ./
+
+# Build the application
+RUN npm run build
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"]

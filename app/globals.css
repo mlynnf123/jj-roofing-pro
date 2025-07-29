@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar for webkit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Enhanced mobile scroll indicators */
+.mobile-scroll-indicator {
+  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Smooth scrolling for mobile */
+.mobile-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile scroll fade effects */
+.scroll-fade-left {
+  background: linear-gradient(to right, rgba(248,250,252,0.9) 0%, transparent 20%);
+}
+
+.scroll-fade-right {
+  background: linear-gradient(to left, rgba(248,250,252,0.9) 0%, transparent 20%);
+}
