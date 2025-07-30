@@ -19,23 +19,38 @@ export const getLeads = async (): Promise<Lead[]> => {
 export const addLead = async (lead: Lead): Promise<Lead> => {
     try {
         console.log("Starting Firebase write for lead:", lead.id);
+        console.log("Firebase database instance:", !!db);
+        console.log("Lead data to save:", JSON.stringify(lead, null, 2));
         
         // Create a document reference with the specific ID from the lead object.
         const leadDocRef = doc(db, LEADS_COLLECTION, lead.id);
+        console.log("Document reference created for collection:", LEADS_COLLECTION);
         
-        console.log("Created document reference, attempting setDoc...");
+        console.log("Attempting setDoc operation...");
         
         // setDoc will create the document with this ID.
         await setDoc(leadDocRef, lead);
         
         console.log("Successfully wrote lead to Firestore:", lead.id);
+        
+        // Verify the write by reading it back
+        try {
+            const verifyQuery = query(collection(db, LEADS_COLLECTION), orderBy('timestamp', 'desc'));
+            const verifySnapshot = await getDocs(verifyQuery);
+            console.log(`Verification: ${verifySnapshot.size} documents now in collection`);
+        } catch (verifyError) {
+            console.warn("Could not verify write:", verifyError);
+        }
+        
         return lead; // Return the original lead object.
     } catch (error) {
         console.error("Error adding lead to Firestore:", error);
         console.error("Error details:", {
             message: error instanceof Error ? error.message : "Unknown error",
             code: (error as any)?.code,
-            stack: error instanceof Error ? error.stack : undefined
+            stack: error instanceof Error ? error.stack : undefined,
+            leadId: lead.id,
+            collection: LEADS_COLLECTION
         });
         throw error;
     }

@@ -42,3 +42,4 @@ manual-groupme-test.js
 *.njsproj
 *.sln
 *.sw?
+.vercel

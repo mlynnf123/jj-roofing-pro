@@ -12,9 +12,10 @@ npm run start    # Start production server
 npm run lint     # Run ESLint
 ```
 
-### Deployment to Google Cloud Run
+### Deployment to Vercel
 ```bash
-./deploy.sh      # Build and deploy to Cloud Run (requires gcloud CLI)
+npm run build    # Build for production
+vercel --prod    # Deploy to Vercel (or push to main branch for automatic deployment)
 ```
 
 ## Architecture Overview

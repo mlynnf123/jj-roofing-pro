@@ -20,9 +20,14 @@ console.log("Firebase config:", {
   authDomain: firebaseConfig.authDomain
 });
 
+// Validate required Firebase config
+if (!firebaseConfig.projectId || !firebaseConfig.apiKey) {
+  throw new Error("Firebase configuration is incomplete. Check environment variables.");
+}
+
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 
-console.log("Firebase initialized successfully");
+console.log("Firebase initialized successfully with project:", firebaseConfig.projectId);
 
 export { db };
