@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Lead } from '../types';
 import { UserIcon } from './icons/UserIcon';
 import { LocationIcon } from './icons/LocationIcon';
 import { ClockIcon } from './icons/ClockIcon';
 import { ClipboardIcon } from './icons/ClipboardIcon';
 import { PaperclipIcon } from './icons/PaperclipIcon';
-import { DocumentTextIcon } from './icons/DocumentTextIcon'; // Import DocumentTextIcon
+import { DocumentTextIcon } from './icons/DocumentTextIcon';
+import { MoreVerticalIcon } from './icons/MoreVerticalIcon';
+import { EditIcon } from './icons/EditIcon';
+import { DeleteIcon } from './icons/DeleteIcon';
 
 interface KanbanCardProps {
   lead: Lead;
   onDragStart: (event: React.DragEvent<HTMLDivElement>) => void;
   onOpenContractModal: () => void;
-  onOpenLeadModal: () => void; // New prop for lead management
+  onOpenLeadModal: () => void;
+  onDeleteLead?: (leadId: string) => void;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = ({ lead, onDragStart, onOpenContractModal, onOpenLeadModal }) => {
+const KanbanCard: React.FC<KanbanCardProps> = ({ lead, onDragStart, onOpenContractModal, onOpenLeadModal, onDeleteLead }) => {
   const [isDragging, setIsDragging] = React.useState(false);
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     setIsDragging(true);
@@ -24,6 +30,30 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ lead, onDragStart, onOpenContra
 
   const handleDragEnd = () => {
     setIsDragging(false);
+  };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showOptionsMenu && menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowOptionsMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showOptionsMenu]);
+
+  const handleEdit = () => {
+    setShowOptionsMenu(false);
+    onOpenLeadModal();
+  };
+
+  const handleDelete = () => {
+    setShowOptionsMenu(false);
+    if (onDeleteLead && window.confirm(`Are you sure you want to delete the lead for ${lead.firstName} ${lead.lastName}? This action cannot be undone.`)) {
+      onDeleteLead(lead.id);
+    }
   };
   
   const formatDate = (isoString: string) => {
@@ -44,9 +74,46 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ lead, onDragStart, onOpenContra
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      className={`bg-white rounded-md p-2 lg:p-3 shadow-md hover:shadow-lg transition-shadow duration-200 cursor-grab border border-slate-100 ${isDragging ? 'opacity-50 ring-2 ring-indigo-500' : ''}`}
+      className={`bg-white rounded-md p-2 lg:p-3 shadow-md hover:shadow-lg transition-shadow duration-200 cursor-grab border border-slate-100 relative ${isDragging ? 'opacity-50 ring-2 ring-indigo-500' : ''}`}
     >
-      <h3 className="text-sm lg:text-base font-semibold text-slate-800 mb-2 leading-tight truncate">
+      {/* Options Menu Button */}
+      <div className="absolute top-2 right-2 z-10" ref={menuRef}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowOptionsMenu(!showOptionsMenu);
+          }}
+          className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+          title="More options"
+        >
+          <MoreVerticalIcon className="w-4 h-4" />
+        </button>
+        
+        {showOptionsMenu && (
+          <div className="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50 border border-slate-200">
+            <div className="py-1">
+              <button
+                onClick={handleEdit}
+                className="flex items-center w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                <EditIcon className="w-3 h-3 mr-2" />
+                Edit Lead
+              </button>
+              {onDeleteLead && (
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <DeleteIcon className="w-3 h-3 mr-2" />
+                  Delete Lead
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <h3 className="text-sm lg:text-base font-semibold text-slate-800 mb-2 leading-tight truncate pr-8">
         <button
           onClick={(e) => {
             e.stopPropagation();

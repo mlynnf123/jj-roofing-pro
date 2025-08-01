@@ -7,10 +7,11 @@ interface KanbanBoardProps {
   stages: LeadStage[];
   onUpdateLeadStage: (leadId: string, newStage: LeadStage) => void;
   onOpenContractModal: (lead: Lead) => void;
-  onOpenLeadModal: (lead: Lead) => void; // New prop for lead management
+  onOpenLeadModal: (lead: Lead) => void;
+  onDeleteLead?: (leadId: string) => void;
 }
 
-const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, stages, onUpdateLeadStage, onOpenContractModal, onOpenLeadModal }) => {
+const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, stages, onUpdateLeadStage, onOpenContractModal, onOpenLeadModal, onDeleteLead }) => {
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, leadId: string) => {
     event.dataTransfer.setData('leadId', leadId);
   };
@@ -46,6 +47,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, stages, onUpdateLeadSt
             onDragOverCardContainer={handleDragOver}
             onOpenContractModal={onOpenContractModal}
             onOpenLeadModal={onOpenLeadModal}
+            onDeleteLead={onDeleteLead}
           />
         ))}
       </div>

@@ -9,10 +9,11 @@ interface KanbanColumnProps {
   onDropCard: (event: React.DragEvent<HTMLDivElement>, newStage: LeadStage) => void;
   onDragOverCardContainer: (event: React.DragEvent<HTMLDivElement>) => void;
   onOpenContractModal: (lead: Lead) => void;
-  onOpenLeadModal: (lead: Lead) => void; // New prop for lead management
+  onOpenLeadModal: (lead: Lead) => void;
+  onDeleteLead?: (leadId: string) => void;
 }
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ stage, leads, onDragStartCard, onDropCard, onDragOverCardContainer, onOpenContractModal, onOpenLeadModal }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ stage, leads, onDragStartCard, onDropCard, onDragOverCardContainer, onOpenContractModal, onOpenLeadModal, onDeleteLead }) => {
   return (
     <div
       className="bg-slate-200 rounded-lg p-2 lg:p-3 w-64 lg:w-72 flex-shrink-0 flex flex-col shadow-md"
@@ -34,6 +35,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ stage, leads, onDragStartCa
             onDragStart={(e) => onDragStartCard(e, lead.id)}
             onOpenContractModal={() => onOpenContractModal(lead)}
             onOpenLeadModal={() => onOpenLeadModal(lead)}
+            onDeleteLead={onDeleteLead}
           />
         ))}
       </div>

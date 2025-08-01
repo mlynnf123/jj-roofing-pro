@@ -255,7 +255,7 @@ const HomePage: React.FC = () => {
       {isCalendarFeatureEnabled && <Script src="https://apis.google.com/js/api.js" async defer onLoad={handleGapiLoad}></Script>}
       <div className="flex flex-col h-screen">
         <Header onSearch={setSearchTerm} onAddLead={() => setIsAddLeadModalOpen(true)} currentPage={currentPage} onNavigate={setCurrentPage} isCalendarEnabled={isCalendarFeatureEnabled} />
-        {currentPage === 'kanban' && <KanbanBoard leads={filteredLeads} stages={KANBAN_STAGES} onUpdateLeadStage={handleUpdateLeadStage} onOpenContractModal={handleOpenContractModal} onOpenLeadModal={handleOpenLeadModal} />}
+        {currentPage === 'kanban' && <KanbanBoard leads={filteredLeads} stages={KANBAN_STAGES} onUpdateLeadStage={handleUpdateLeadStage} onOpenContractModal={handleOpenContractModal} onOpenLeadModal={handleOpenLeadModal} onDeleteLead={handleDeleteLead} />}
         {currentPage === 'leads-list' && <LeadsListPage leads={filteredLeads} onOpenContractModal={handleOpenContractModal} onOpenLeadModal={handleOpenLeadModal} onDeleteLead={handleDeleteLead} />}
         {currentPage === 'calendar' && isCalendarFeatureEnabled && <CalendarPage gapiReady={gapiReady} isSignedIn={googleAuthSignedIn} onSignIn={handleGoogleSignIn} onSignOut={handleGoogleSignOut} calendars={calendars} error={googleAuthError} />}
         {isAddLeadModalOpen && <AddLeadModal onClose={() => setIsAddLeadModalOpen(false)} onAddLead={handleAddLead} onParseWithAI={handleParseLeadWithAI} />}
