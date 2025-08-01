@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { parseLeadInfoWithGemini } from '@/services/geminiService';
+import { parseLeadInfoWithGemini } from '@/services/improvedLeadParser';
 import { saveLeadToDatabase } from '@/lib/firebaseUtils';
 import { Lead, LeadStage } from '@/types';
 
@@ -87,10 +87,10 @@ export async function POST(request: Request) {
             };
         }
 
-        if (!parsedData.firstName || !parsedData.lastName || !parsedData.address) {
-            console.log("Could not parse required lead fields from message. Ignoring.");
+        if (!parsedData.firstName || !parsedData.lastName) {
+            console.log("Could not parse customer name from message. Ignoring.");
             // Still return 200 so GroupMe doesn't retry.
-            return NextResponse.json({ message: "OK - Could not parse required fields" }, { status: 200 });
+            return NextResponse.json({ message: "OK - Could not parse customer name" }, { status: 200 });
         }
         
         const now = new Date().toISOString();
@@ -105,7 +105,11 @@ export async function POST(request: Request) {
             documents: [],
             firstName: parsedData.firstName!,
             lastName: parsedData.lastName!,
-            address: parsedData.address!,
+            address: parsedData.address || "Address not specified",
+            phoneNumber: parsedData.phoneNumber || "Phone not specified",
+            claimNumber: parsedData.claimNumber || "Claim number not specified",
+            claimCompany: parsedData.claimCompany || "Insurance company not specified",
+            nextSetDate: parsedData.nextSetDate,
             ...(parsedData.time && { time: parsedData.time }),
             ...(parsedData.claimInfo && { claimInfo: parsedData.claimInfo }),
         };

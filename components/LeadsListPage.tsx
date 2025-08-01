@@ -132,12 +132,14 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
             <thead className="bg-slate-50">
               <tr>
                 {renderHeaderCell('Customer Name', 'name')}
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Phone</th>
                 {renderHeaderCell('Address', 'address')}
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Claim #</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Insurance Co</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Next Set Date</th>
                 {renderHeaderCell('Stage', 'stage')}
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Appointment Time</th>
-                {renderHeaderCell('Claim Info', 'claimInfo')}
+                {renderHeaderCell('Sales Rep', 'sender')}
                 {renderHeaderCell('Date Added', 'timestamp')}
-                {renderHeaderCell('Source', 'sender')}
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Contract</th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Actions</span>
@@ -157,16 +159,24 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
                       </button>{' '}
                       {lead.lastName}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {lead.phoneNumber && lead.phoneNumber !== 'Phone not specified' ? lead.phoneNumber : 'Not specified'}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.address}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {lead.claimNumber && lead.claimNumber !== 'Claim number not specified' ? lead.claimNumber : 'Not specified'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {lead.claimCompany && lead.claimCompany !== 'Insurance company not specified' ? lead.claimCompany : 'Not specified'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.nextSetDate || 'Not specified'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${stageColorMap[lead.stage] || 'bg-gray-100 text-gray-800'}`}>
                         {lead.stage}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.time || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.claimInfo || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{formatDate(lead.timestamp)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.sender || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{formatDate(lead.timestamp)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
                         onClick={() => onOpenContractModal(lead)}
@@ -215,7 +225,7 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
                 ))
               ) : (
                 <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center text-sm text-slate-500">
+                  <td colSpan={11} className="px-6 py-12 text-center text-sm text-slate-500">
                     No leads found. Try a different search term or add a new lead.
                   </td>
                 </tr>

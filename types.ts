@@ -96,10 +96,14 @@ export interface Lead {
   firstName: string;
   lastName: string;
   address: string;
+  phoneNumber?: string; // Customer phone number
   time?: string; // Appointment time
   claimInfo?: string;
+  claimNumber?: string; // Insurance claim number
+  claimCompany?: string; // Insurance company name
+  nextSetDate?: string; // Date mentioned by sales rep for follow-up
   originalMessage?: string; // Raw text input or GroupMe message
-  sender?: string; // Name of person who added/sent lead
+  sender?: string; // Name of person who added/sent lead (Sales rep)
   timestamp: string; // ISO string of creation date
   stage: LeadStage;
   lastStageUpdateTimestamp: string; // ISO string of when the stage was last updated
