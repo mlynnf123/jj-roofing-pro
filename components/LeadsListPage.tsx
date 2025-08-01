@@ -178,7 +178,7 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="relative" ref={(el) => menuRefs.current[lead.id] = el}>
+                      <div className="relative" ref={(el) => { menuRefs.current[lead.id] = el; }}>
                         <button
                           onClick={() => handleMenuToggle(lead.id)}
                           className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
