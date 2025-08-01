@@ -1,14 +1,18 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Lead, LeadStage } from '../types';
 import { DocumentTextIcon } from './icons/DocumentTextIcon';
 import { ArrowUpIcon } from './icons/ArrowUpIcon';
 import { ArrowDownIcon } from './icons/ArrowDownIcon';
+import { MoreVerticalIcon } from './icons/MoreVerticalIcon';
+import { EditIcon } from './icons/EditIcon';
+import { DeleteIcon } from './icons/DeleteIcon';
 
 interface LeadsListPageProps {
   leads: Lead[];
   onOpenContractModal: (lead: Lead) => void;
   onOpenLeadModal: (lead: Lead) => void;
+  onDeleteLead?: (leadId: string) => void;
 }
 
 type SortableKey = 'name' | 'address' | 'stage' | 'timestamp' | 'sender' | 'claimInfo';
@@ -22,8 +26,10 @@ const stageColorMap: Record<LeadStage, string> = {
   [LeadStage.CLOSED_LOST]: 'bg-red-100 text-red-800',
 };
 
-const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModal, onOpenLeadModal }) => {
+const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModal, onOpenLeadModal, onDeleteLead }) => {
   const [sortConfig, setSortConfig] = useState<{ key: SortableKey; direction: 'ascending' | 'descending' }>({ key: 'timestamp', direction: 'descending' });
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const menuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const sortedLeads = useMemo(() => {
     let sortableItems = [...leads];
@@ -55,12 +61,40 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
     return sortableItems;
   }, [leads, sortConfig]);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId && menuRefs.current[openMenuId] && !menuRefs.current[openMenuId]?.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openMenuId]);
+
   const requestSort = (key: SortableKey) => {
     let direction: 'ascending' | 'descending' = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
+  };
+
+  const handleMenuToggle = (leadId: string) => {
+    setOpenMenuId(openMenuId === leadId ? null : leadId);
+  };
+
+  const handleEdit = (lead: Lead) => {
+    setOpenMenuId(null);
+    onOpenLeadModal(lead);
+  };
+
+  const handleDelete = (leadId: string, leadName: string) => {
+    setOpenMenuId(null);
+    if (onDeleteLead && window.confirm(`Are you sure you want to delete the lead for ${leadName}? This action cannot be undone.`)) {
+      onDeleteLead(leadId);
+    }
   };
 
   const renderSortArrow = (key: SortableKey) => {
@@ -104,6 +138,7 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
                 {renderHeaderCell('Claim Info', 'claimInfo')}
                 {renderHeaderCell('Date Added', 'timestamp')}
                 {renderHeaderCell('Source', 'sender')}
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Contract</th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -132,21 +167,55 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.claimInfo || 'N/A'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{formatDate(lead.timestamp)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{lead.sender || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
                         onClick={() => onOpenContractModal(lead)}
                         className="text-indigo-600 hover:text-indigo-900 flex items-center"
                         title="Manage Contract Details"
                       >
-                         <DocumentTextIcon className="w-5 h-5 mr-1" />
-                        Manage
+                         <DocumentTextIcon className="w-4 h-4 mr-1" />
+                        Contract
                       </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="relative" ref={(el) => menuRefs.current[lead.id] = el}>
+                        <button
+                          onClick={() => handleMenuToggle(lead.id)}
+                          className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                          title="More options"
+                        >
+                          <MoreVerticalIcon className="w-5 h-5" />
+                        </button>
+                        
+                        {openMenuId === lead.id && (
+                          <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                            <div className="py-1">
+                              <button
+                                onClick={() => handleEdit(lead)}
+                                className="flex items-center w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                              >
+                                <EditIcon className="w-4 h-4 mr-3" />
+                                Edit Lead
+                              </button>
+                              {onDeleteLead && (
+                                <button
+                                  onClick={() => handleDelete(lead.id, `${lead.firstName} ${lead.lastName}`)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                >
+                                  <DeleteIcon className="w-4 h-4 mr-3" />
+                                  Delete Lead
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-sm text-slate-500">
+                  <td colSpan={9} className="px-6 py-12 text-center text-sm text-slate-500">
                     No leads found. Try a different search term or add a new lead.
                   </td>
                 </tr>
