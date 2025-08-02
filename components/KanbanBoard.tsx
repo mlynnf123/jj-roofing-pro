@@ -17,7 +17,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, stages, onUpdateLeadSt
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>, newStage: LeadStage) => {
-    event.preventDefault();
+    (event as any).preventDefault();
     const leadId = event.dataTransfer.getData('leadId');
     if (leadId) {
       onUpdateLeadStage(leadId, newStage);
@@ -25,7 +25,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ leads, stages, onUpdateLeadSt
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault(); // Necessary to allow dropping
+    (event as any).preventDefault(); // Necessary to allow dropping
   };
 
   return (

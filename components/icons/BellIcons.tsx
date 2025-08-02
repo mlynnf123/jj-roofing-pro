@@ -1,7 +1,8 @@
 
 import React from 'react';
+import { IconProps as BaseIconProps } from './types';
 
-interface IconProps extends React.SVGProps<SVGSVGElement> {
+interface IconProps extends BaseIconProps {
   title?: string;
 }
 

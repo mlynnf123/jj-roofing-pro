@@ -68,7 +68,7 @@ const SignatureCanvas = forwardRef<SignatureCanvasRef, SignatureCanvasProps>(
 
     }, [width, height]);
 
-    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const startDrawing = (e: any) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -88,7 +88,7 @@ const SignatureCanvas = forwardRef<SignatureCanvasRef, SignatureCanvasProps>(
       ctx.moveTo(x, y);
     };
 
-    const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const draw = (e: any) => {
       if (!isDrawing) return;
 
       const canvas = canvasRef.current;
@@ -118,17 +118,17 @@ const SignatureCanvas = forwardRef<SignatureCanvasRef, SignatureCanvasProps>(
     };
 
     // Prevent scrolling when drawing on touch devices
-    const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const handleTouchStart = (e: any) => {
       e.preventDefault();
       startDrawing(e);
     };
 
-    const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const handleTouchMove = (e: any) => {
       e.preventDefault();
       draw(e);
     };
 
-    const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const handleTouchEnd = (e: any) => {
       e.preventDefault();
       stopDrawing();
     };
