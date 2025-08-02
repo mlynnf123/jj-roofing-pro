@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Lead, ContractDetails, ContractLineItem, PaymentScheduleItem } from '../types';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon'; 
-import { PrinterIcon } from './icons/PrinterIcon'; 
+import { PrinterIcon } from './icons/PrinterIcon';
+import SignatureModal from './SignatureModal'; 
 
 interface ContractModalProps {
   lead: Lead;
@@ -16,10 +17,17 @@ const getInitialContractDetails = (lead: Lead, rep: ContractModalProps['defaultC
   return {
     contractDate: new Date().toISOString().split('T')[0],
     customerName: `${lead.firstName} ${lead.lastName}`,
-    companyRepresentativeName: rep.name,
-    companyRepresentativePhone: rep.phone,
-    companyRepresentativeEmail: rep.email,
-    roofingItems: [],
+    companyRepresentativeName: rep.name || "Justin Cox",
+    companyRepresentativePhone: rep.phone || "(737) 414-1929",
+    companyRepresentativeEmail: rep.email || "Justin@jjroofingpros.com",
+    roofingItems: [
+      { 
+        id: crypto.randomUUID(), 
+        description: "Lifetime | Standing Seam Metal\n-Synthetic Felt\n-Ridge\n-Ice & Water Barrier\n-Drip Edge Installed (Painted to Match Shingle)\n-Plumbing Boots (Painted to Match Roof)\n-Ventilation Replaced/Reconditioned & Painted\n-All Debris Removed & Site Cleaned, Swept of Metals, Nails, etc.\nJJ Roofing Pros LLC LIFETIME WORKMANSHIP warranty\n****Line items above are products JJ Roofing Pros LLC is providing to the customer and is not an upgrade request to insurance.****", 
+        quantity: "1", 
+        price: "0.00" 
+      }
+    ],
     gutterItems: [],
     windowItems: [],
     grandTotal: "0.00",
@@ -58,6 +66,17 @@ const ContractModal: React.FC<ContractModalProps> = ({ lead, onClose, onSaveCont
   const [details, setDetails] = useState<ContractDetails>(
     lead.contract ? { ...lead.contract } : getInitialContractDetails(lead, defaultCompanyRep)
   );
+  const [signatureModal, setSignatureModal] = useState<{
+    isOpen: boolean;
+    type: 'company' | 'customer1' | 'customer2' | 'customer3' | 'customer4';
+    title: string;
+    description?: string;
+  }>({
+    isOpen: false,
+    type: 'company',
+    title: '',
+    description: ''
+  });
 
   useEffect(() => {
     // If lead or contract on lead changes, update form
@@ -108,17 +127,123 @@ const ContractModal: React.FC<ContractModalProps> = ({ lead, onClose, onSaveCont
     e.preventDefault();
     onSaveContract(lead.id, details);
   };
+
+  const handleSignatureRequest = (type: 'company' | 'customer1' | 'customer2' | 'customer3' | 'customer4') => {
+    const titles = {
+      company: 'Company Authorized Signature',
+      customer1: 'Customer Signature (Page 1)',
+      customer2: 'Customer Signature (Page 3)', 
+      customer3: 'Customer Signature (Page 5)',
+      customer4: 'Customer Signature (Page 6)'
+    };
+
+    const descriptions = {
+      company: 'Please provide the company representative signature.',
+      customer1: 'Customer signature for contract acceptance.',
+      customer2: 'Customer signature acknowledging insurance contract worksheet.',
+      customer3: 'Customer signature for contract terms and payment agreement.',
+      customer4: 'Customer signature for third party authorization.'
+    };
+
+    setSignatureModal({
+      isOpen: true,
+      type,
+      title: titles[type],
+      description: descriptions[type]
+    });
+  };
+
+  const handleSignatureSave = (signatureData: string, date: string) => {
+    const { type } = signatureModal;
+    
+    const signatureFields = {
+      company: 'companyAuthorizedSignature',
+      customer1: 'customerSignature1',
+      customer2: 'customerSignature2', 
+      customer3: 'customerSignature3',
+      customer4: 'customerSignature4'
+    };
+
+    const dateFields = {
+      company: 'companyAuthorizedSignatureDate',
+      customer1: 'customerSignature1Date',
+      customer2: 'customerSignature2Date',
+      customer3: 'customerSignature3Date',
+      customer4: 'customerSignature4Date'
+    };
+
+    setDetails(prev => ({
+      ...prev,
+      [signatureFields[type]]: signatureData,
+      [dateFields[type]]: date
+    }));
+
+    setSignatureModal(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const renderSignatureButton = (type: 'company' | 'customer1' | 'customer2' | 'customer3' | 'customer4', label: string) => {
+    const signatureFields = {
+      company: 'companyAuthorizedSignature',
+      customer1: 'customerSignature1',
+      customer2: 'customerSignature2',
+      customer3: 'customerSignature3',
+      customer4: 'customerSignature4'
+    };
+
+    const hasSignature = !!(details as any)[signatureFields[type]];
+
+    return (
+      <div className="flex items-center space-x-2">
+        <button
+          type="button"
+          onClick={() => handleSignatureRequest(type)}
+          className={`px-3 py-2 text-sm font-medium rounded-md border ${
+            hasSignature 
+              ? 'bg-green-50 border-green-300 text-green-700 hover:bg-green-100' 
+              : 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100'
+          }`}
+        >
+          {hasSignature ? '✓ Signed' : `Sign ${label}`}
+        </button>
+        {hasSignature && (
+          <button
+            type="button"  
+            onClick={() => setDetails(prev => ({ ...prev, [signatureFields[type]]: undefined }))}
+            className="text-red-600 hover:text-red-800 text-sm"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+    );
+  };
   
   // Helper to render line item inputs
   const renderLineItems = (itemType: 'roofingItems' | 'gutterItems' | 'windowItems', title: string) => (
     <div className="space-y-3 p-3 border border-slate-200 rounded-md">
       <h4 className="text-md font-semibold text-slate-700">{title}</h4>
       {(details[itemType] as ContractLineItem[]).map((item, index) => (
-        <div key={item.id || index} className="grid grid-cols-12 gap-2 items-center">
-          <input type="text" placeholder="Description" value={item.description} onChange={e => handleItemChange(itemType, index, 'description', e.target.value)} className="col-span-6 mt-1 w-full px-2 py-1 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+        <div key={item.id || index} className="grid grid-cols-12 gap-2 items-start">
+          {itemType === 'roofingItems' ? (
+            <textarea 
+              placeholder="Description" 
+              value={item.description} 
+              onChange={e => handleItemChange(itemType, index, 'description', e.target.value)} 
+              className="col-span-6 mt-1 w-full px-2 py-1 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm min-h-[100px]" 
+              rows={4}
+            />
+          ) : (
+            <input 
+              type="text" 
+              placeholder="Description" 
+              value={item.description} 
+              onChange={e => handleItemChange(itemType, index, 'description', e.target.value)} 
+              className="col-span-6 mt-1 w-full px-2 py-1 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" 
+            />
+          )}
           <input type="text" placeholder="Qty" value={item.quantity} onChange={e => handleItemChange(itemType, index, 'quantity', e.target.value)} className="col-span-2 mt-1 w-full px-2 py-1 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
           <input type="text" placeholder="Price" value={item.price} onChange={e => handleItemChange(itemType, index, 'price', e.target.value)} className="col-span-3 mt-1 w-full px-2 py-1 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
-          <button type="button" onClick={() => removeItem(itemType, index)} className="col-span-1 text-red-500 hover:text-red-700">
+          <button type="button" onClick={() => removeItem(itemType, index)} className="col-span-1 text-red-500 hover:text-red-700 mt-1">
             <TrashIcon className="w-5 h-5" />
           </button>
         </div>
@@ -216,6 +341,32 @@ const ContractModal: React.FC<ContractModalProps> = ({ lead, onClose, onSaveCont
           </details>
 
           <details className="border border-slate-200 rounded p-2 text-sm">
+            <summary className="font-medium cursor-pointer">Digital Signatures</summary>
+            <div className="space-y-4 mt-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Company Authorized Signature (Page 1)</label>
+                {renderSignatureButton('company', 'Company')}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Customer Signature 1 (Page 1)</label>
+                {renderSignatureButton('customer1', 'Customer')}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Customer Signature 2 (Page 3)</label>
+                {renderSignatureButton('customer2', 'Customer')}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Customer Signature 3 (Page 5)</label>
+                {renderSignatureButton('customer3', 'Customer')}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Customer Signature 4 (Page 6)</label>
+                {renderSignatureButton('customer4', 'Customer')}
+              </div>
+            </div>
+          </details>
+
+          <details className="border border-slate-200 rounded p-2 text-sm">
             <summary className="font-medium cursor-pointer">Page 6 - Third Party Authorization</summary>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
               <div><label className="block text-xs font-medium text-slate-600">Homeowner Name(s)</label><input type="text" name="thirdPartyAuthHomeownerName" value={details.thirdPartyAuthHomeownerName || ''} onChange={handleChange} className="mt-1 w-full px-1.5 py-0.5 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs" /></div>
@@ -256,6 +407,14 @@ const ContractModal: React.FC<ContractModalProps> = ({ lead, onClose, onSaveCont
             </button>
           </div>
         </form>
+        
+        <SignatureModal
+          isOpen={signatureModal.isOpen}
+          onClose={() => setSignatureModal(prev => ({ ...prev, isOpen: false }))}
+          onSave={handleSignatureSave}
+          title={signatureModal.title}
+          description={signatureModal.description}
+        />
       </div>
     </div>
   );

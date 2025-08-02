@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { parseLeadInfoWithGemini } from '@/services/improvedLeadParser';
 import { saveLeadToDatabase } from '@/lib/firebaseUtils';
+import { checkForDuplicateLead } from '@/lib/data';
 import { Lead, LeadStage } from '@/types';
 
 interface GroupMeWebhookPayload {
@@ -54,28 +55,24 @@ function extractAddress(text: string): string | undefined {
     return undefined;
 }
 
-export async function POST(request: Request) {
+// Async function to process lead without blocking webhook response
+async function processLeadAsync(text: string, senderName: string): Promise<void> {
     try {
-        const body: GroupMeWebhookPayload = await request.json();
-        const { text, name: senderName } = body;
+        console.log(`Processing lead from ${senderName}: "${text}"`);
 
-        if (!text) {
-            // Ignore messages without text (e.g., likes)
-            return NextResponse.json({ message: "OK - No text" }, { status: 200 });
-        }
-        
-        // Avoid bot loops - you should name your bot something unique.
-        if (senderName === 'RoofingBot' || senderName === 'AI Lead Parser') {
-            return NextResponse.json({ message: "Ignoring bot message." }, { status: 200 });
-        }
-
-        console.log(`Received message from ${senderName}: "${text}"`);
-
-        // Use Gemini to parse the lead information with fallback
+        // Use Gemini to parse the lead information with timeout and fallback
         let parsedData: Partial<Lead>;
         
         try {
-            parsedData = await parseLeadInfoWithGemini(text);
+            // Add timeout to AI parsing
+            const parseWithTimeout = Promise.race([
+                parseLeadInfoWithGemini(text),
+                new Promise<never>((_, reject) => 
+                    setTimeout(() => reject(new Error("AI parsing timeout")), 3000)
+                )
+            ]);
+            
+            parsedData = await parseWithTimeout;
         } catch (error) {
             console.error("Gemini parsing failed, using manual parsing:", error);
             // Fallback to simple text parsing
@@ -88,9 +85,33 @@ export async function POST(request: Request) {
         }
 
         if (!parsedData.firstName || !parsedData.lastName) {
-            console.log("Could not parse customer name from message. Ignoring.");
-            // Still return 200 so GroupMe doesn't retry.
-            return NextResponse.json({ message: "OK - Could not parse customer name" }, { status: 200 });
+            console.log("Could not parse customer name from message. Skipping lead creation.");
+            return;
+        }
+
+        // Check for duplicate leads with timeout
+        let duplicateLead;
+        try {
+            const duplicateCheckWithTimeout = Promise.race([
+                checkForDuplicateLead(
+                    parsedData.firstName,
+                    parsedData.lastName,
+                    parsedData.address || "Address not specified"
+                ),
+                new Promise<null>((resolve) => 
+                    setTimeout(() => resolve(null), 2000)
+                )
+            ]);
+            
+            duplicateLead = await duplicateCheckWithTimeout;
+        } catch (error) {
+            console.error("Duplicate check failed, proceeding with lead creation:", error);
+            duplicateLead = null;
+        }
+
+        if (duplicateLead) {
+            console.log(`Duplicate lead detected for ${parsedData.firstName} ${parsedData.lastName} at ${parsedData.address}. Skipping.`);
+            return;
         }
         
         const now = new Date().toISOString();
@@ -100,7 +121,7 @@ export async function POST(request: Request) {
             timestamp: now,
             stage: LeadStage.NEW_LEAD,
             lastStageUpdateTimestamp: now,
-            sender: senderName, // Set sender from GroupMe message
+            sender: senderName,
             originalMessage: text,
             documents: [],
             firstName: parsedData.firstName!,
@@ -114,16 +135,49 @@ export async function POST(request: Request) {
             ...(parsedData.claimInfo && { claimInfo: parsedData.claimInfo }),
         };
         
-        // Save lead to database (Firebase in production, local storage fallback in development)
-        await saveLeadToDatabase(newLead);
-        
-        console.log("Successfully parsed and added new lead:", newLead);
+        // Save lead to database with improved error handling
+        try {
+            await saveLeadToDatabase(newLead);
+            console.log("Successfully processed and saved new lead:", newLead.id);
+        } catch (error) {
+            console.error("Failed to save lead to database:", error);
+            // TODO: Implement retry queue for failed saves
+        }
 
-        return NextResponse.json({ message: "Lead processed successfully" }, { status: 200 });
+    } catch (error) {
+        console.error("Error in async lead processing:", error);
+    }
+}
+
+export async function POST(request: Request) {
+    try {
+        const body: GroupMeWebhookPayload = await request.json();
+        const { text, name: senderName } = body;
+
+        // Respond to GroupMe immediately to prevent timeouts
+        const response = NextResponse.json({ message: "Message received" }, { status: 200 });
+
+        if (!text) {
+            console.log("Ignoring message without text");
+            return response;
+        }
+        
+        // Avoid bot loops
+        if (senderName === 'RoofingBot' || senderName === 'AI Lead Parser') {
+            console.log("Ignoring bot message");
+            return response;
+        }
+
+        // Process lead asynchronously without blocking response
+        processLeadAsync(text, senderName).catch(error => {
+            console.error("Async lead processing failed:", error);
+        });
+
+        return response;
 
     } catch (error) {
         console.error("Error processing GroupMe webhook:", error);
-        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        return NextResponse.json({ message: "Error processing webhook", error: errorMessage }, { status: 500 });
+        // Still return 200 to prevent GroupMe from retrying
+        return NextResponse.json({ message: "Webhook received" }, { status: 200 });
     }
 }

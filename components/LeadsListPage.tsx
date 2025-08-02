@@ -127,9 +127,9 @@ const LeadsListPage: React.FC<LeadsListPageProps> = ({ leads, onOpenContractModa
   return (
     <div className="p-4 sm:p-6 flex-grow">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="overflow-x-auto custom-scrollbar">
+        <div className="overflow-auto custom-scrollbar max-h-[calc(100vh-200px)]">
           <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+            <thead className="bg-slate-50 sticky top-0 z-10">
               <tr>
                 {renderHeaderCell('Customer Name', 'name')}
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Phone</th>

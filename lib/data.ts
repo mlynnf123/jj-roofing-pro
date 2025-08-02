@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, deleteDoc, query, orderBy, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { db } from './firebase';
 import { Lead } from '../types';
 
@@ -76,5 +76,59 @@ export const deleteLead = async (leadId: string): Promise<boolean> => {
     } catch (error) {
         console.error("Error deleting lead from Firestore:", error);
         throw error;
+    }
+};
+
+// Checks for duplicate leads based on customer name and address
+export const checkForDuplicateLead = async (firstName: string, lastName: string, address: string): Promise<Lead | null> => {
+    try {
+        const leads = await getLeads();
+        
+        // Normalize strings for comparison
+        const normalizeString = (str: string) => str.toLowerCase().trim().replace(/\s+/g, ' ');
+        
+        const targetFirstName = normalizeString(firstName);
+        const targetLastName = normalizeString(lastName);
+        const targetAddress = normalizeString(address);
+        
+        // Look for existing lead with same customer name and address
+        const duplicateLead = leads.find(lead => {
+            const leadFirstName = normalizeString(lead.firstName);
+            const leadLastName = normalizeString(lead.lastName);
+            const leadAddress = normalizeString(lead.address);
+            
+            return leadFirstName === targetFirstName && 
+                   leadLastName === targetLastName && 
+                   leadAddress === targetAddress;
+        });
+        
+        return duplicateLead || null;
+    } catch (error) {
+        console.error("Error checking for duplicate lead:", error);
+        return null; // Return null if check fails, allowing lead creation to proceed
+    }
+};
+
+// Sets up a real-time listener for leads collection
+export const subscribeToLeads = (callback: (leads: Lead[]) => void): Unsubscribe => {
+    try {
+        const leadsCollectionRef = collection(db, LEADS_COLLECTION);
+        const q = query(leadsCollectionRef, orderBy('timestamp', 'desc'));
+        
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const leadsList = querySnapshot.docs.map(doc => doc.data() as Lead);
+            callback(leadsList);
+        }, (error) => {
+            console.error("Error in leads subscription:", error);
+            // Fallback to one-time fetch if real-time fails
+            getLeads().then(callback).catch(console.error);
+        });
+        
+        return unsubscribe;
+    } catch (error) {
+        console.error("Error setting up leads subscription:", error);
+        // Fallback to one-time fetch
+        getLeads().then(callback).catch(console.error);
+        return () => {}; // Return empty unsubscribe function
     }
 };

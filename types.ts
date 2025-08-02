@@ -87,6 +87,13 @@ export interface ContractDetails {
   thirdPartyAuthIssuedPaymentDiscussions?: boolean;
   thirdPartyAuthRequestClaimPaymentStatus?: boolean;
 
+  // Digital signatures (base64 encoded images)
+  companyAuthorizedSignature?: string; // Page 1
+  customerSignature1?: string; // Page 1  
+  customerSignature2?: string; // Page 3
+  customerSignature3?: string; // Page 5
+  customerSignature4?: string; // Page 6
+
   // Signature dates for all pages
   companyAuthorizedSignatureDate?: string; // Page 1
   customerSignature1Date?: string; // Page 1

@@ -32,6 +32,43 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
     window.print();
   };
 
+  const handleDownloadPDF = () => {
+    // Create a link element for download
+    const printContent = document.querySelector('.printable-area')?.innerHTML;
+    if (!printContent) return;
+
+    // Use browser's print to PDF functionality  
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Contract - ${firstName} ${lastName}</title>
+          <style>
+            body { margin: 0; padding: 20px; font-family: Arial, sans-serif; font-size: 12px; }
+            .printable-area { max-width: none; }
+            @media print {
+              body { margin: 0; padding: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="printable-area">${printContent}</div>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    
+    // Automatically trigger print dialog
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-[100] print:bg-white print:p-0">
       <style>{`
@@ -84,7 +121,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                   <p className="text-xs"><strong>Send Payment To:</strong> 14205 N MO PAC EXPY STE 570</p>
                   <p className="text-xs">AUSTIN, TX 78728</p>
                   <p className="text-xs">(737) 414 - 1929</p>
-                  <p className="text-xs">www.JJRoofers.com</p>
+                  <p className="text-xs">www.jjroofingpros.com</p>
                 </div>
               </div>
             </div>
@@ -100,7 +137,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                 <h3 className="font-bold mb-2">Company Representative</h3>
                 <p>{contract.companyRepresentativeName || "Justin Cox"}</p>
                 <p>{contract.companyRepresentativePhone || "(737) 414-1929"}</p>
-                <p>{contract.companyRepresentativeEmail || "Justin@JJroofers.com"}</p>
+                <p>{contract.companyRepresentativeEmail || "Justin@jjroofingpros.com"}</p>
               </div>
             </div>
 
@@ -119,29 +156,32 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                   <td className="border border-black p-1"></td>
                   <td className="border border-black p-1"></td>
                 </tr>
-                <tr>
-                  <td className="border border-black p-1">
-                    Lifetime | Standing Seam Metal<br/>
-                    -Synthetic Felt<br/>
-                    -Ridge<br/>
-                    -Ice & Water Barrier<br/>
-                    -Drip Edge Installed (Painted to Match Shingle)<br/>
-                    -Plumbing Boots (Painted to Match Roof)<br/>
-                    -Ventilation Replaced/Reconditioned & Painted<br/>
-                    -All Debris Removed & Site Cleaned, Swept of Metals, Nails, etc.<br/>
-                    JJ Roofing Pros LLC LIFETIME WORKMANSHIP warranty<br/>
-                    <strong>****Line items above are products JJ Roofing Pros LLC is providing to the customer and is not an upgrade request to insurance.****</strong>
-                  </td>
-                  <td className="border border-black p-1 text-center">1</td>
-                  <td className="border border-black p-1 text-right">{contract.grandTotal}</td>
-                </tr>
-                {contract.roofingItems && contract.roofingItems.map(item => (
-                  <tr key={item.id}>
-                    <td className="border border-black p-1">{item.description}</td>
-                    <td className="border border-black p-1 text-center">{item.quantity}</td>
-                    <td className="border border-black p-1 text-right">{item.price}</td>
+                {contract.roofingItems && contract.roofingItems.length > 0 ? (
+                  contract.roofingItems.map(item => (
+                    <tr key={item.id}>
+                      <td className="border border-black p-1 whitespace-pre-line">{item.description}</td>
+                      <td className="border border-black p-1 text-center">{item.quantity}</td>
+                      <td className="border border-black p-1 text-right">{item.price}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="border border-black p-1">
+                      Lifetime | Standing Seam Metal<br/>
+                      -Synthetic Felt<br/>
+                      -Ridge<br/>
+                      -Ice & Water Barrier<br/>
+                      -Drip Edge Installed (Painted to Match Shingle)<br/>
+                      -Plumbing Boots (Painted to Match Roof)<br/>
+                      -Ventilation Replaced/Reconditioned & Painted<br/>
+                      -All Debris Removed & Site Cleaned, Swept of Metals, Nails, etc.<br/>
+                      JJ Roofing Pros LLC LIFETIME WORKMANSHIP warranty<br/>
+                      <strong>****Line items above are products JJ Roofing Pros LLC is providing to the customer and is not an upgrade request to insurance.****</strong>
+                    </td>
+                    <td className="border border-black p-1 text-center">1</td>
+                    <td className="border border-black p-1 text-right">{contract.grandTotal}</td>
                   </tr>
-                ))}
+                )}
                 <tr>
                   <td className="border border-black p-1 font-bold">Gutters</td>
                   <td className="border border-black p-1"></td>
@@ -195,10 +235,26 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
             {/* Signatures */}
             <div className="grid grid-cols-2 gap-8 mt-8">
               <div>
-                <p className="mb-4">Company Authorized Signature _________________ Date _______</p>
+                <p className="mb-2">Company Authorized Signature</p>
+                {contract.companyAuthorizedSignature ? (
+                  <div className="flex items-center space-x-4">
+                    <img src={contract.companyAuthorizedSignature} alt="Company Signature" className="h-12 border border-gray-300" />
+                    <span className="text-xs">Date: {contract.companyAuthorizedSignatureDate || '_______'}</span>
+                  </div>
+                ) : (
+                  <p className="mb-4">_________________ Date _______</p>
+                )}
               </div>
               <div>
-                <p className="mb-4">Customer Signature 1 _________________ Date _______</p>
+                <p className="mb-2">Customer Signature 1</p>
+                {contract.customerSignature1 ? (
+                  <div className="flex items-center space-x-4">
+                    <img src={contract.customerSignature1} alt="Customer Signature 1" className="h-12 border border-gray-300" />
+                    <span className="text-xs">Date: {contract.customerSignature1Date || '_______'}</span>
+                  </div>
+                ) : (
+                  <p className="mb-4">_________________ Date _______</p>
+                )}
               </div>
             </div>
 
@@ -284,7 +340,15 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
               <p className="mt-6">By signing below, you acknowledge that you have read and agree to the terms of this Insurance Contract Worksheet.</p>
               
               <div className="mt-4">
-                <p>Customer Signature 2 _________________________ Date _______</p>
+                <p className="mb-2">Customer Signature 2</p>
+                {contract.customerSignature2 ? (
+                  <div className="flex items-center space-x-4">
+                    <img src={contract.customerSignature2} alt="Customer Signature 2" className="h-12 border border-gray-300" />
+                    <span className="text-xs">Date: {contract.customerSignature2Date || '_______'}</span>
+                  </div>
+                ) : (
+                  <p>_________________________ Date _______</p>
+                )}
               </div>
             </div>
 
@@ -379,13 +443,29 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
               <p>JJ Roofing Pros LLC is not responsible for any money not released due to lapsed claim of time, out of date policies or negligence to complete work within one year of date of loss. By signing the contract, you agree to pay in full all completed work, regardless of insurance release of money due to your policy terms.</p>
 
               <div className="mt-6">
-                <p>Customer Signature _________________________ Date _______</p>
+                <p className="mb-2">Customer Signature 3</p>
+                {contract.customerSignature3 ? (
+                  <div className="flex items-center space-x-4">
+                    <img src={contract.customerSignature3} alt="Customer Signature 3" className="h-12 border border-gray-300" />
+                    <span className="text-xs">Date: {contract.customerSignature3Date || '_______'}</span>
+                  </div>
+                ) : (
+                  <p>_________________________ Date _______</p>
+                )}
               </div>
 
               <p className="mt-4">JJ Roofing Pro LLC is not responsible for any money held by mortgage company, nor shall their timeframe of releases apply to JJ Roofing Pros LLC. By signing this contract, you agree to pay upon the agreed and signed payment terms, regardless of your mortgage terms/ mortgage money holds.</p>
 
               <div className="mt-4">
-                <p>Customer Signature _________________________ Date _______</p>
+                <p className="mb-2">Customer Signature (continued)</p>
+                {contract.customerSignature3 ? (
+                  <div className="flex items-center space-x-4">
+                    <img src={contract.customerSignature3} alt="Customer Signature 3" className="h-12 border border-gray-300" />
+                    <span className="text-xs">Date: {contract.customerSignature3Date || '_______'}</span>
+                  </div>
+                ) : (
+                  <p>_________________________ Date _______</p>
+                )}
               </div>
 
               <p className="mt-4">We accept personal checks, money orders, cashiers checks or credit cards. (Make checks payable to JJ Roofing Pro LLC. ) There is a 1% processing fee for credit card transactions. Returned checks will result in a returned check fee of $50 and/or potential hot check charges filed with the appropriate authorities.</p>
@@ -393,7 +473,15 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
               <p className="mt-4"><strong>*** law requires a person insured under a property insurance policy to pay any deductible applicable to a claim made under the policy. It is a violation of law for a seller of goods or services who reasonably expects to be paid wholly or partly from the proceeds of a property insurance claim to knowingly allow the insured person to fail to pay, or assist the insured person's failure to pay, the applicable insurance deductible. ***</strong></p>
 
               <div className="mt-6">
-                <p>Customer Signature 3 _________________________ Date _______</p>
+                <p className="mb-2">Customer Signature 3 (Final)</p>
+                {contract.customerSignature3 ? (
+                  <div className="flex items-center space-x-4">
+                    <img src={contract.customerSignature3} alt="Customer Signature 3" className="h-12 border border-gray-300" />
+                    <span className="text-xs">Date: {contract.customerSignature3Date || '_______'}</span>
+                  </div>
+                ) : (
+                  <p>_________________________ Date _______</p>
+                )}
               </div>
             </div>
 
@@ -455,11 +543,19 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                 <li>As a general contractor coordinating the trades and work, they have overhead costs not connected to specific line items on the estimate. JJ Roofing Pros LLC. must include overhead and profit to provide their contracting services to stay in business, as they have expenses and overhead above and beyond the normal expenses of laborer who does the work themselves.</li>
               </ol>
               
-              <p className="mt-2">Please speak directly with JJ Roofing Pros LLC. regarding any questions. You can reach them at {contract.companyRepresentativePhone || "(737) 414-1929"} or {contract.companyRepresentativeEmail || "Justin@JJroofers.com"}.</p>
+              <p className="mt-2">Please speak directly with JJ Roofing Pros LLC. regarding any questions. You can reach them at {contract.companyRepresentativePhone || "(737) 414-1929"} or {contract.companyRepresentativeEmail || "Justin@jjroofingpros.com"}.</p>
             </div>
 
             <div className="mt-8">
-              <p>Customer Signature 4 _________________________ Date _______</p>
+              <p className="mb-2">Customer Signature 4</p>
+              {contract.customerSignature4 ? (
+                <div className="flex items-center space-x-4">
+                  <img src={contract.customerSignature4} alt="Customer Signature 4" className="h-12 border border-gray-300" />
+                  <span className="text-xs">Date: {contract.customerSignature4Date || '_______'}</span>
+                </div>
+              ) : (
+                <p>_________________________ Date _______</p>
+              )}
             </div>
 
             <p className="text-center text-xs mt-8">Page 6 of 8</p>
@@ -485,6 +581,12 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
             className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-md shadow-sm transition-colors"
           >
             Close Preview
+          </button>
+          <button
+            onClick={handleDownloadPDF}
+            className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-sm transition-colors"
+          >
+            Download PDF
           </button>
           <button
             onClick={handlePrint}

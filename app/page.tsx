@@ -41,8 +41,28 @@ const HomePage: React.FC = () => {
   const [calendars, setCalendars] = useState<CalendarListEntry[]>([]);
   const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
 
-  // Data fetching
-  const fetchLeads = useCallback(async () => {
+  // Data subscription with real-time updates
+  const setupLeadsSubscription = useCallback(() => {
+    setIsLoading(true);
+    
+    // Import the subscription function dynamically to avoid server-side issues
+    import('../lib/data').then(({ subscribeToLeads }) => {
+      const unsubscribe = subscribeToLeads((updatedLeads) => {
+        setLeads(updatedLeads);
+        setIsLoading(false);
+      });
+      
+      // Return unsubscribe function for cleanup
+      return unsubscribe;
+    }).catch((error) => {
+      console.error('Failed to setup real-time subscription, falling back to fetch:', error);
+      // Fallback to API fetch if Firebase subscription fails
+      fetchLeadsFallback();
+    });
+  }, []);
+
+  // Fallback fetch method for when real-time subscription fails
+  const fetchLeadsFallback = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch('/api/leads');
@@ -58,8 +78,26 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchLeads();
-  }, [fetchLeads]);
+    let unsubscribe: (() => void) | undefined;
+    
+    // Setup real-time subscription
+    import('../lib/data').then(({ subscribeToLeads }) => {
+      unsubscribe = subscribeToLeads((updatedLeads) => {
+        setLeads(updatedLeads);
+        setIsLoading(false);
+      });
+    }).catch((error) => {
+      console.error('Failed to setup real-time subscription:', error);
+      fetchLeadsFallback();
+    });
+    
+    // Cleanup subscription on unmount
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [fetchLeadsFallback]);
 
   // --- Google Calendar Logic ---
   const handleGapiLoad = useCallback(() => {
