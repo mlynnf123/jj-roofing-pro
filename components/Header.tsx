@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from 'next/image';
 import { PlusIcon } from './icons/PlusIcon';
 
 type CurrentPage = 'kanban' | 'calendar' | 'leads-list';
@@ -17,7 +18,16 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onAddLead, currentPage, onNav
   return (
     <header className="bg-slate-800 text-white p-4 shadow-md">
       <div className="flex items-center justify-between mb-4 lg:mb-0 gap-4">
-        <h1 className="text-xl lg:text-2xl font-bold tracking-tight flex-shrink-0">JJ Roofing Pros</h1>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <Image 
+            src="/Austin, TX.png" 
+            alt="JJ Roofing Logo" 
+            width={40} 
+            height={40}
+            className="object-contain"
+          />
+          <h1 className="text-xl lg:text-2xl font-bold tracking-tight">JJ Roofing Pros</h1>
+        </div>
         <button
           onClick={onAddLead}
           className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 lg:px-4 rounded-md shadow-sm transition-colors duration-150 flex-shrink-0"
