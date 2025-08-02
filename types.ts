@@ -30,65 +30,69 @@ export interface PaymentScheduleItem {
 
 export interface ContractDetails {
   contractDate: string; // ISO Date string
-  // Page 1 - Customer (usually from Lead, but can be confirmed/overridden)
+  
+  // Page 1 - Customer Information
   customerName?: string; // Auto-fill from lead.firstName + lead.lastName
-  // Page 1 - Company Representative
-  companyRepresentativeName: string;
-  companyRepresentativePhone: string;
-  companyRepresentativeEmail: string;
+  customerAddress?: string; // Property address
+  
+  // Page 1 - Company Representative (Default: Justin Cox)
+  companyRepresentativeName: string; // Default: "Justin Cox"
+  companyRepresentativePhone: string; // Default: "(737) 414-1929"
+  companyRepresentativeEmail: string; // Default: "Justin@JJroofers.com"
 
-  // Page 1 - Main Services (Roofing, Gutters, Windows)
+  // Page 1 - Main Services
   roofingItems: ContractLineItem[];
   gutterItems: ContractLineItem[];
   windowItems: ContractLineItem[];
-  // Calculated Subtotal and Total can be derived or entered if complex
+  
+  // Page 1 - Financial Summary
   subtotal?: string;
   total?: string;
   grandTotal: string;
 
-  // Page 1 - Payment Schedule
+  // Page 1 - Payment Schedule (3 standard payments)
   paymentSchedule: PaymentScheduleItem[];
 
   // Page 2 - Contract Worksheet
   deductible?: string;
   nonRecoverableDepreciation?: string;
-  upgrades?: string; // e.g., "OC TRU DEF DURATION CLASS 3 IR, SYNTHETIC UL, I&W, LIFETIME WARRANTY"
-  discounts?: string; // e.g., "STORM"
-  workNotDoing?: string; // e.g., "GUTTERS, BEADING"
+  upgrades?: string; // Default: "Standing Seam Metal, SYNTHETIC UL, I&W, LIFETIME WARRANTY"
+  discounts?: string;
+  workNotDoing?: string; // Default: "GUTTERS, BEADING"
   remainingBalanceOnDeductibleAndUpgrades?: string;
 
-  // Page 4 - Please Review and Initial the Below Items
-  shingleTypeColorDelivery: string;
-  existingPropertyDamage: string; // e.g., "Fascia Rot, Driveway Cracks, etc."
+  // Page 4 - Review and Initial Items
+  shingleTypeColorDelivery?: string; // Default: "Shingles | Lifetime | IKO Dynasty | Duration Class 3 / None / None"
+  existingPropertyDamage?: string; // Default: "None"
 
   // Page 4 - Liability Disclosure Addendum Initials
-  initialsConstructionSiteCaution: boolean;
-  initialsDrivewayUsage: boolean;
-  initialsPuncturedLines: boolean;
-  initialsTermsOnReverseSide: boolean;
+  initialsConstructionSiteCaution?: string; // Customer initials
+  initialsDrivewayUsage?: string; // Customer initials
+  initialsPuncturedLines?: string; // Customer initials
+  initialsTermsOnReverseSide?: string; // Customer initials
 
   // Page 4 - Right of Rescission and Property Disclosure
-  initialsRightOfRescissionConfirmation: boolean;
-  initialsDisclosureConfirmation: boolean;
-  cancellationSignature?: string; // Placeholder for image or typed name
-  cancellationDate?: string; // ISO Date string
+  initialsRightOfRescissionConfirmation?: string; // Customer initials
+  initialsDisclosureConfirmation?: string; // Customer initials
+  cancellationSignature?: string;
+  cancellationDate?: string;
 
   // Page 6 - Third Party Authorization Form
-  thirdPartyAuthHomeownerName?: string; // Could be customerName
-  thirdPartyAuthPropertyAddress?: string; // Could be lead.address
+  thirdPartyAuthHomeownerName?: string;
+  thirdPartyAuthPropertyAddress?: string;
   thirdPartyAuthInsuranceCompany?: string;
   thirdPartyAuthClaimNumber?: string;
-  thirdPartyAuthRequestInspections: boolean;
-  thirdPartyAuthDiscussSupplements: boolean;
-  thirdPartyAuthIssuedPaymentDiscussions: boolean;
-  thirdPartyAuthRequestClaimPaymentStatus: boolean;
+  thirdPartyAuthRequestInspections?: boolean;
+  thirdPartyAuthDiscussSupplements?: boolean;
+  thirdPartyAuthIssuedPaymentDiscussions?: boolean;
+  thirdPartyAuthRequestClaimPaymentStatus?: boolean;
 
-  // Other signature placeholders (visual in PrintableContract, not data fields for e-sign)
-  companyAuthorizedSignatureDate?: string; // ISO Date string
-  customerSignature1Date?: string; // ISO Date string
-  customerSignature2Date?: string; // ISO Date string
-  customerSignature3Date?: string; // ISO Date string
-  customerSignature4Date?: string; // ISO Date string
+  // Signature dates for all pages
+  companyAuthorizedSignatureDate?: string; // Page 1
+  customerSignature1Date?: string; // Page 1
+  customerSignature2Date?: string; // Page 3
+  customerSignature3Date?: string; // Page 5
+  customerSignature4Date?: string; // Page 6
 }
 
 export interface Lead {
