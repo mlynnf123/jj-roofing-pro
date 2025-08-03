@@ -151,33 +151,57 @@ async function processLeadAsync(text: string, senderName: string): Promise<void>
 
 export async function POST(request: Request) {
     try {
+        // Log webhook receipt
+        console.log(`[${new Date().toISOString()}] GroupMe webhook received`);
+        
         const body: GroupMeWebhookPayload = await request.json();
         const { text, name: senderName } = body;
+        
+        // Log message details
+        console.log(`[GroupMe Webhook] Sender: ${senderName}, Text: ${text?.substring(0, 100)}${text?.length > 100 ? '...' : ''}`);
 
         // Respond to GroupMe immediately to prevent timeouts
         const response = NextResponse.json({ message: "Message received" }, { status: 200 });
 
         if (!text) {
-            console.log("Ignoring message without text");
+            console.log("[GroupMe Webhook] Ignoring message without text");
             return response;
         }
         
         // Avoid bot loops
-        if (senderName === 'RoofingBot' || senderName === 'AI Lead Parser') {
-            console.log("Ignoring bot message");
+        if (senderName === 'RoofingBot' || senderName === 'AI Lead Parser' || senderName === 'GroupMe') {
+            console.log(`[GroupMe Webhook] Ignoring bot message from: ${senderName}`);
             return response;
         }
 
+        // Log processing start
+        console.log(`[GroupMe Webhook] Processing lead from ${senderName}`);
+        
         // Process lead asynchronously without blocking response
         processLeadAsync(text, senderName).catch(error => {
-            console.error("Async lead processing failed:", error);
+            console.error("[GroupMe Webhook] Async lead processing failed:", error);
         });
 
         return response;
 
     } catch (error) {
-        console.error("Error processing GroupMe webhook:", error);
+        console.error("[GroupMe Webhook] Error processing webhook:", error);
         // Still return 200 to prevent GroupMe from retrying
         return NextResponse.json({ message: "Webhook received" }, { status: 200 });
     }
+}
+
+// GET endpoint for webhook verification and debugging
+export async function GET() {
+    return NextResponse.json({
+        status: "active",
+        message: "GroupMe webhook is configured and ready to receive messages",
+        endpoint: "/api/groupme-webhook",
+        timestamp: new Date().toISOString(),
+        notes: [
+            "This webhook processes GroupMe messages and creates leads automatically",
+            "Bot messages are filtered out to prevent loops",
+            "Messages are processed asynchronously to avoid timeouts"
+        ]
+    });
 }
