@@ -23,7 +23,7 @@ const getInitialContractDetails = (lead: Lead, rep: ContractModalProps['defaultC
     roofingItems: [
       { 
         id: crypto.randomUUID(), 
-        description: "Lifetime | Standing Seam Metal\n-Synthetic Felt\n-Ridge\n-Ice & Water Barrier\n-Drip Edge Installed (Painted to Match Shingle)\n-Plumbing Boots (Painted to Match Roof)\n-Ventilation Replaced/Reconditioned & Painted\n-All Debris Removed & Site Cleaned, Swept of Metals, Nails, etc.\nJJ Roofing Pros LLC LIFETIME WORKMANSHIP warranty\n****Line items above are products JJ Roofing Pros LLC is providing to the customer and is not an upgrade request to insurance.****", 
+        description: "Lifetime | Standing Seam Metal\n-Synthetic Felt\n-Ridge\n-Ice & Water Barrier\n-Drip Edge Installed (Painted to Match Shingle)\n-Plumbing Boots (Painted to Match Roof)\n-Ventilation Replaced/Reconditioned & Painted\n-All Debris Removed & Site Cleaned, Swept of Metals, Nails, etc.\nJ&J Roofing Pros, LLC LIFETIME WORKMANSHIP warranty\n****Line items above are products J&J Roofing Pros, LLC is providing to the customer and is not an upgrade request to insurance.****", 
         quantity: "1", 
         price: "0.00" 
       }
@@ -374,7 +374,7 @@ const ContractModal: React.FC<ContractModalProps> = ({ lead, onClose, onSaveCont
               <div><label className="block text-xs font-medium text-slate-600">Insurance Company</label><input type="text" name="thirdPartyAuthInsuranceCompany" value={details.thirdPartyAuthInsuranceCompany || ''} onChange={handleChange} className="mt-1 w-full px-1.5 py-0.5 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs" /></div>
               <div><label className="block text-xs font-medium text-slate-600">Claim Number</label><input type="text" name="thirdPartyAuthClaimNumber" value={details.thirdPartyAuthClaimNumber || ''} onChange={handleChange} className="mt-1 w-full px-1.5 py-0.5 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs" /></div>
               <div className="md:col-span-2 space-y-1 mt-1">
-                <p className="text-xs text-slate-600">I/We authorize JJ Roofing Pros LLC for the following regarding my claim:</p>
+                <p className="text-xs text-slate-600">I/We authorize J&J Roofing Pros, LLC for the following regarding my claim:</p>
                 {renderCheckbox("Request Inspections", "thirdPartyAuthRequestInspections")}
                 {renderCheckbox("Discuss and Request Supplements", "thirdPartyAuthDiscussSupplements")}
                 {renderCheckbox("Issued payment discussions and all insurance paperwork discussions", "thirdPartyAuthIssuedPaymentDiscussions")}

@@ -116,7 +116,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                   className="object-contain"
                 />
                 <div>
-                  <h1 className="text-lg font-bold">J Roofing Pros LLC</h1>
+                  <h1 className="text-lg font-bold">J&J Roofing Pros, LLC</h1>
                   <p className="text-xs">Corporate Headquarters</p>
                   <p className="text-xs"><strong>Send Payment To:</strong> 14205 N MO PAC EXPY STE 570</p>
                   <p className="text-xs">AUSTIN, TX 78728</p>
@@ -175,8 +175,8 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                       -Plumbing Boots (Painted to Match Roof)<br/>
                       -Ventilation Replaced/Reconditioned & Painted<br/>
                       -All Debris Removed & Site Cleaned, Swept of Metals, Nails, etc.<br/>
-                      JJ Roofing Pros LLC LIFETIME WORKMANSHIP warranty<br/>
-                      <strong>****Line items above are products JJ Roofing Pros LLC is providing to the customer and is not an upgrade request to insurance.****</strong>
+                      J&J Roofing Pros, LLC LIFETIME WORKMANSHIP warranty<br/>
+                      <strong>****Line items above are products J&J Roofing Pros, LLC is providing to the customer and is not an upgrade request to insurance.****</strong>
                     </td>
                     <td className="border border-black p-1 text-center">1</td>
                     <td className="border border-black p-1 text-right">{contract.grandTotal}</td>
@@ -301,7 +301,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
             <div className="mt-6">
               <h3 className="font-bold mb-2">Recovering Withheld Depreciation and Supplements</h3>
               <div className="text-xs space-y-2">
-                <p>Your insurance company has depreciated items on your claim. In order to recover the depreciation, a final invoice is sent to your insurance company. In the event that items were missing from your original estimate, JJ Roofing Pros LLC. (JJR) has also applied for supplemental items with your insurance company. These supplemental items, if any, are included on the insurance invoice and in the final invoice total. Below are the steps you will need to take to ensure your recoverable depreciation and supplements are released from your insurance company:</p>
+                <p>Your insurance company has depreciated items on your claim. In order to recover the depreciation, a final invoice is sent to your insurance company. In the event that items were missing from your original estimate, J&J Roofing Pros, LLC. (JJR) has also applied for supplemental items with your insurance company. These supplemental items, if any, are included on the insurance invoice and in the final invoice total. Below are the steps you will need to take to ensure your recoverable depreciation and supplements are released from your insurance company:</p>
                 
                 <ol className="list-decimal list-inside space-y-1 ml-4">
                   <li>Have your claim number available.</li>
@@ -312,12 +312,12 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                   <li>Follow up with the handling adjuster within 3 business days to confirm payment has been processed and mailed to you.</li>
                   <li>You may have to follow up several times to expedite the process. Insurance companies can get very busy and it helps to stay on top of them to ensure your funds get released in a timely manner.</li>
                   <li>Once you have received the remaining funds, call your JJR Representative to pay any balances owed and to schedule any remaining trades.</li>
-                  <li>You may pay by personal check, cashiers check, credit card (1% processing fee) made payable to JJ Roofing Pros LLC.</li>
+                  <li>You may pay by personal check, cashiers check, credit card (1% processing fee) made payable to J&J Roofing Pros, LLC.</li>
                 </ol>
                 
                 <p className="mt-4">For Invoice Questions, contact your JJR Sales Representative, or call the JJR Billing Department at (737) 414-1929. For Supplement Questions, contact your JJR Sales Representative, (737) 414-1929, or Admin@JJRoofers.com. Please sign below, indicating that you have read and understand the Insurance Contract Worksheet and the Recovering of Withheld Depreciation and Supplements.</p>
                 
-                <p className="mt-4">All insurance approved supplements and recoverable depreciation will be due to JJ Roofing Pros LLC. Customer agrees to fully cooperate with any necessary paperwork needed to seek supplement and recoverable depreciation approval, and has no claim to any supplemental funds or recoverable depreciation. If Customer does not cooperate with these requests, the additional supplements and recoverable depreciation will be due at the sole responsibility of Customer. Any supplements that are denied by the insurance provider will not be the responsibility of the customer.</p>
+                <p className="mt-4">All insurance approved supplements and recoverable depreciation will be due to J&J Roofing Pros, LLC. Customer agrees to fully cooperate with any necessary paperwork needed to seek supplement and recoverable depreciation approval, and has no claim to any supplemental funds or recoverable depreciation. If Customer does not cooperate with these requests, the additional supplements and recoverable depreciation will be due at the sole responsibility of Customer. Any supplements that are denied by the insurance provider will not be the responsibility of the customer.</p>
               </div>
             </div>
 
@@ -357,9 +357,9 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
 
           {/* PAGE 4 - Contract Terms and Review Items */}
           <div className="p-6 text-xs leading-tight print:break-after-page">
-            <h2 className="text-lg font-bold text-center mb-4">JJ Roofing Pros LLC. Roofing Contract & Payment Terms</h2>
+            <h2 className="text-lg font-bold text-center mb-4">J&J Roofing Pros, LLC. Roofing Contract & Payment Terms</h2>
             
-            <p className="mb-4">With this contract, JJ Roofing Pros LLC. sets forth the agreement between JJ Roofing Pros LLC. (hereinafter "JJR") and "{contract.customerName || `${firstName} ${lastName}`}" (hereinafter "Customer") to establish the working terms for work to be completed at {contract.customerAddress || address}. In addition to the working terms, this contract also establishes the agreed upon payment schedule between JJR and Customer.</p>
+            <p className="mb-4">With this contract, J&J Roofing Pros, LLC. sets forth the agreement between J&J Roofing Pros, LLC. (hereinafter "JJR") and "{contract.customerName || `${firstName} ${lastName}`}" (hereinafter "Customer") to establish the working terms for work to be completed at {contract.customerAddress || address}. In addition to the working terms, this contract also establishes the agreed upon payment schedule between JJR and Customer.</p>
 
             <div className="mb-6">
               <h3 className="font-bold mb-2">Please Review and Initial the Below Items:</h3>
@@ -381,15 +381,15 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
               <div className="space-y-3">
                 <div className="flex items-start">
                   <span className="border border-black w-12 h-4 mr-2 flex-shrink-0"></span>
-                  <span>I understand that this is a construction site, and agree to use caution when entering and exiting my property and to ensure the safety of my family members, friends, children and pets on the premises. I understand and accept the risks of falling debris and errant nails. It is my responsibility to use reasonable caution and I agree to release and hold harmless JJ Roofing Pros LLC., of any responsibility for any injury, damage to property or death that may occur due in part or in whole to any negligence on my part. I understand it is my responsibility to secure any items in my home that may be fragile or might fall resulting in injury or death. Any damage to any items is the sole responsibility of Customer.</span>
+                  <span>I understand that this is a construction site, and agree to use caution when entering and exiting my property and to ensure the safety of my family members, friends, children and pets on the premises. I understand and accept the risks of falling debris and errant nails. It is my responsibility to use reasonable caution and I agree to release and hold harmless J&J Roofing Pros, LLC., of any responsibility for any injury, damage to property or death that may occur due in part or in whole to any negligence on my part. I understand it is my responsibility to secure any items in my home that may be fragile or might fall resulting in injury or death. Any damage to any items is the sole responsibility of Customer.</span>
                 </div>
                 <div className="flex items-start">
                   <span className="border border-black w-12 h-4 mr-2 flex-shrink-0"></span>
-                  <span>All JJR vehicles are rated for driveway usage and any damage and/or cracks resulting from routine driveway usage and/or parking in the driveway to complete the job is not the responsibility of JJ Roofing Pros LLC.</span>
+                  <span>All JJR vehicles are rated for driveway usage and any damage and/or cracks resulting from routine driveway usage and/or parking in the driveway to complete the job is not the responsibility of J&J Roofing Pros, LLC.</span>
                 </div>
                 <div className="flex items-start">
                   <span className="border border-black w-12 h-4 mr-2 flex-shrink-0"></span>
-                  <span>I understand that any punctured lines are not the responsibility of JJ Roofing Pros LLC. during the installation process. Code provides for installation standards for roofing and all code standards are followed by JJR. In the event that an electric, HVAC, Plumbing, etc. line is damaged during the installation process, it is the sole responsibility of Customer to repair.</span>
+                  <span>I understand that any punctured lines are not the responsibility of J&J Roofing Pros, LLC. during the installation process. Code provides for installation standards for roofing and all code standards are followed by JJR. In the event that an electric, HVAC, Plumbing, etc. line is damaged during the installation process, it is the sole responsibility of Customer to repair.</span>
                 </div>
                 <div className="flex items-start">
                   <span className="border border-black w-12 h-4 mr-2 flex-shrink-0"></span>
@@ -422,7 +422,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
           {/* PAGE 5 - Additional Terms */}
           <div className="p-6 text-xs leading-tight print:break-after-page">
             <div className="space-y-4">
-              <p><strong>Terms</strong> I understand that a JJR Representative is available upon request to inspect all furnace vent connections that may become unattached during the roofing process. I understand it is my responsibility to ensure these connections are secure or request a JJR Representative to inspect the crucial connections, so that Carbon Monoxide does not enter my dwelling. I agree that this is my responsibility to ensure the safety of my family and agree to hold harmless JJ Roofing Pros LLC. of all liability associated with Carbon Monoxide and/or furnace vent connections. I further understand that Carbon Monoxide is a deadly Gas and Serious injury or death may occur as a result of furnace vents becoming disconnected.</p>
+              <p><strong>Terms</strong> I understand that a JJR Representative is available upon request to inspect all furnace vent connections that may become unattached during the roofing process. I understand it is my responsibility to ensure these connections are secure or request a JJR Representative to inspect the crucial connections, so that Carbon Monoxide does not enter my dwelling. I agree that this is my responsibility to ensure the safety of my family and agree to hold harmless J&J Roofing Pros, LLC. of all liability associated with Carbon Monoxide and/or furnace vent connections. I further understand that Carbon Monoxide is a deadly Gas and Serious injury or death may occur as a result of furnace vents becoming disconnected.</p>
 
               <p>In the event of rotten decking, JJR will replace up to three (3) sheets of decking at no additional cost to Customer, if there is a widespread decking issue, the decking will need to be replaced at the expense of Customer. Not replacing rotten decking will void your manufacturer warranty as well as your Lifetime Workmanship Warranty from JJR. It is at the discretion of the JJR Roofing Crew to remove all felted areas on your roof. New felt may be placed over existing felt in some areas. A thorough inspection of existing decking is still conducted of any areas with an additional felt layer.</p>
 
@@ -432,15 +432,15 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
 
               <p><strong>Warranty</strong> JJR includes a Lifetime Workmanship Warranty on all JJR roofing systems, which protects against poor workmanship. JJR is not responsible for normal wear and tear. See complete warranty information for details. Warranty begins upon payment in full of total contract amount and approved supplements warranty will be voided by unpaid contract. Warranty is voided due to damages caused by a named storm/ acts of God that goes through your area.</p>
 
-              <p><strong>Payments</strong> First roof payment is due when materials are delivered and the crew has started work. Failure to make first payment may result in work stoppage. JJ Roofing Pros LLC. is not liable for damages that may occur due to work stoppage for failure to make initial contract payment to property. This includes but is not limited to flooding, water damage, theft of material, etc. Final roof payment is due to JJR upon roof completion any and all trade payments are due upon completion of trade. Final payments not received within 30 days of completion will be considered failure to pay and will be subject to Failure to Pay Penalties. See Failure to Pay Penalties for further details.</p>
+              <p><strong>Payments</strong> First roof payment is due when materials are delivered and the crew has started work. Failure to make first payment may result in work stoppage. J&J Roofing Pros, LLC. is not liable for damages that may occur due to work stoppage for failure to make initial contract payment to property. This includes but is not limited to flooding, water damage, theft of material, etc. Final roof payment is due to JJR upon roof completion any and all trade payments are due upon completion of trade. Final payments not received within 30 days of completion will be considered failure to pay and will be subject to Failure to Pay Penalties. See Failure to Pay Penalties for further details.</p>
 
               <p><strong>Failure to Pay Penalties</strong> 10% penalty assessed against the total remainder due, all discounts will be revoked at the sole discretion of JJR and the account is subject to being sent to a 3rd party collections agency. Failure to pay may also result in Theft of Service charges being filed per Texas Penal Code § 31.04 in addition to any necessary civil remedies.</p>
 
-              <p><strong>Notice of Cancellation for Contract</strong> If I choose to exercise my three-day Right of Rescission, I understand that by signing and dating in the space provided will make this contract null and void and no work will be provided by JJR. I understand it is my responsibility to mail 1 copy of this cancelled contract to the corporate office of JJ Roofing Pros LLC. to Send Payment To: 14205 N MO PAC EXPY STE 570 Austin, TX 78728 or to post marked or time stamped no later than midnight on the Third business day upon the date that this contract was executed. In the event that your insurance company denies a filed claim a pre-contract will be cancelled with proof of denial. Contracts cancelled outside of this period may result in a restocking fee not to exceed 25% of the total contracted amount.</p>
+              <p><strong>Notice of Cancellation for Contract</strong> If I choose to exercise my three-day Right of Rescission, I understand that by signing and dating in the space provided will make this contract null and void and no work will be provided by JJR. I understand it is my responsibility to mail 1 copy of this cancelled contract to the corporate office of J&J Roofing Pros, LLC. to Send Payment To: 14205 N MO PAC EXPY STE 570 Austin, TX 78728 or to post marked or time stamped no later than midnight on the Third business day upon the date that this contract was executed. In the event that your insurance company denies a filed claim a pre-contract will be cancelled with proof of denial. Contracts cancelled outside of this period may result in a restocking fee not to exceed 25% of the total contracted amount.</p>
 
               <p><strong>Note:</strong> JJR Sales Representatives do not make verbal contracts and any terms not disclosed on a contract are considered null and void.</p>
 
-              <p>JJ Roofing Pros LLC is not responsible for any money not released due to lapsed claim of time, out of date policies or negligence to complete work within one year of date of loss. By signing the contract, you agree to pay in full all completed work, regardless of insurance release of money due to your policy terms.</p>
+              <p>J&J Roofing Pros, LLC is not responsible for any money not released due to lapsed claim of time, out of date policies or negligence to complete work within one year of date of loss. By signing the contract, you agree to pay in full all completed work, regardless of insurance release of money due to your policy terms.</p>
 
               <div className="mt-6">
                 <p className="mb-2">Customer Signature 3</p>
@@ -454,7 +454,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                 )}
               </div>
 
-              <p className="mt-4">JJ Roofing Pro LLC is not responsible for any money held by mortgage company, nor shall their timeframe of releases apply to JJ Roofing Pros LLC. By signing this contract, you agree to pay upon the agreed and signed payment terms, regardless of your mortgage terms/ mortgage money holds.</p>
+              <p className="mt-4">J&J Roofing Pros, LLC is not responsible for any money held by mortgage company, nor shall their timeframe of releases apply to J&J Roofing Pros, LLC. By signing this contract, you agree to pay upon the agreed and signed payment terms, regardless of your mortgage terms/ mortgage money holds.</p>
 
               <div className="mt-4">
                 <p className="mb-2">Customer Signature (continued)</p>
@@ -468,7 +468,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
                 )}
               </div>
 
-              <p className="mt-4">We accept personal checks, money orders, cashiers checks or credit cards. (Make checks payable to JJ Roofing Pro LLC. ) There is a 1% processing fee for credit card transactions. Returned checks will result in a returned check fee of $50 and/or potential hot check charges filed with the appropriate authorities.</p>
+              <p className="mt-4">We accept personal checks, money orders, cashiers checks or credit cards. (Make checks payable to J&J Roofing Pros, LLC. ) There is a 1% processing fee for credit card transactions. Returned checks will result in a returned check fee of $50 and/or potential hot check charges filed with the appropriate authorities.</p>
 
               <p className="mt-4"><strong>*** law requires a person insured under a property insurance policy to pay any deductible applicable to a claim made under the policy. It is a violation of law for a seller of goods or services who reasonably expects to be paid wholly or partly from the proceeds of a property insurance claim to knowingly allow the insured person to fail to pay, or assist the insured person's failure to pay, the applicable insurance deductible. ***</strong></p>
 
@@ -511,7 +511,7 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
               </div>
             </div>
 
-            <p className="mb-4">I/We, ______________________, authorize the following third party, JJ Roofing Pros LLC. the following type(s) of authorization(s) regarding my claim:</p>
+            <p className="mb-4">I/We, ______________________, authorize the following third party, J&J Roofing Pros, LLC. the following type(s) of authorization(s) regarding my claim:</p>
 
             <div className="space-y-2 mb-6">
               <div className="flex items-center">
@@ -534,16 +534,16 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
 
             <div className="mb-6">
               <h3 className="font-bold mb-2">Overhead & Profit</h3>
-              <p className="mb-2">Understanding the time, effort, energy and supervision necessary for the restoration of my project, I do not have the time nor the resources to coordinate or manage this project to completion. Therefore, this statement is to inform you that my contractor of choice, JJ Roofing Pros LLC, is my general contractor, and they will be managing and coordinating all subcontractors and projects required to complete the repair of my property.</p>
+              <p className="mb-2">Understanding the time, effort, energy and supervision necessary for the restoration of my project, I do not have the time nor the resources to coordinate or manage this project to completion. Therefore, this statement is to inform you that my contractor of choice, J&J Roofing Pros, LLC, is my general contractor, and they will be managing and coordinating all subcontractors and projects required to complete the repair of my property.</p>
               
               <p className="mb-2">Therefore, overhead & profit should be included in my estimate due to the following reasons:</p>
               <ol className="list-decimal list-inside ml-4 space-y-1">
-                <li>JJ Roofing Pros LLC. is a general contractor</li>
+                <li>J&J Roofing Pros, LLC. is a general contractor</li>
                 <li>They will directly hire and coordinate all subcontractors required to complete my project</li>
-                <li>As a general contractor coordinating the trades and work, they have overhead costs not connected to specific line items on the estimate. JJ Roofing Pros LLC. must include overhead and profit to provide their contracting services to stay in business, as they have expenses and overhead above and beyond the normal expenses of laborer who does the work themselves.</li>
+                <li>As a general contractor coordinating the trades and work, they have overhead costs not connected to specific line items on the estimate. J&J Roofing Pros, LLC. must include overhead and profit to provide their contracting services to stay in business, as they have expenses and overhead above and beyond the normal expenses of laborer who does the work themselves.</li>
               </ol>
               
-              <p className="mt-2">Please speak directly with JJ Roofing Pros LLC. regarding any questions. You can reach them at {contract.companyRepresentativePhone || "(737) 414-1929"} or {contract.companyRepresentativeEmail || "Justin@jjroofingpros.com"}.</p>
+              <p className="mt-2">Please speak directly with J&J Roofing Pros, LLC. regarding any questions. You can reach them at {contract.companyRepresentativePhone || "(737) 414-1929"} or {contract.companyRepresentativeEmail || "Justin@jjroofingpros.com"}.</p>
             </div>
 
             <div className="mt-8">
@@ -561,17 +561,6 @@ const PrintableContract: React.FC<PrintableContractProps> = ({ lead, onClose }) 
             <p className="text-center text-xs mt-8">Page 6 of 8</p>
           </div>
 
-          {/* PAGES 7-8 would contain additional terms, conditions, and legal text */}
-          <div className="p-6 text-xs leading-tight print:break-after-page">
-            <h2 className="text-lg font-bold text-center mb-4">Additional Terms and Conditions</h2>
-            <p className="text-center text-slate-600 mb-4">Pages 7-8 would contain additional legal terms, warranty details, and conditions as specified in your complete contract.</p>
-            
-            <div className="flex items-center justify-center h-64 bg-slate-50 rounded border-2 border-dashed border-slate-300">
-              <p className="text-slate-500 text-center">Additional contract pages content would be inserted here<br/>based on your complete 8-page contract template</p>
-            </div>
-
-            <p className="text-center text-xs mt-8">Pages 7-8 of 8</p>
-          </div>
 
         </div>
 

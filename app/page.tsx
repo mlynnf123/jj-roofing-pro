@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
   const [selectedLeadForContract, setSelectedLeadForContract] = useState<Lead | null>(null);
   const [selectedLeadForManagement, setSelectedLeadForManagement] = useState<Lead | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<CurrentPage>('kanban');
+  const [currentPage, setCurrentPage] = useState<CurrentPage>('leads-list');
 
   const isCalendarFeatureEnabled = !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 

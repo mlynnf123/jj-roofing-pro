@@ -89,6 +89,9 @@ async function processLeadAsync(text: string, senderName: string): Promise<void>
             return;
         }
 
+        // Import updateLead function
+        const { updateLead } = await import('@/lib/data');
+
         // Check for duplicate leads with timeout
         let duplicateLead;
         try {
@@ -110,7 +113,28 @@ async function processLeadAsync(text: string, senderName: string): Promise<void>
         }
 
         if (duplicateLead) {
-            console.log(`Duplicate lead detected for ${parsedData.firstName} ${parsedData.lastName} at ${parsedData.address}. Skipping.`);
+            console.log(`Found existing lead for ${parsedData.firstName} ${parsedData.lastName}. Updating with new information.`);
+            
+            // Update existing lead with new information
+            const updatedLead: Lead = {
+                ...duplicateLead,
+                // Update with new parsed data if available
+                phoneNumber: parsedData.phoneNumber || duplicateLead.phoneNumber,
+                claimNumber: parsedData.claimNumber || duplicateLead.claimNumber,
+                claimCompany: parsedData.claimCompany || duplicateLead.claimCompany,
+                nextSetDate: parsedData.nextSetDate || duplicateLead.nextSetDate,
+                // Append new message to notes or update originalMessage
+                originalMessage: `${duplicateLead.originalMessage}\n\n--- Update ${new Date().toISOString()} from ${senderName} ---\n${text}`,
+                // Keep the original timestamp but update the last modified
+                lastModified: new Date().toISOString()
+            };
+            
+            try {
+                await updateLead(updatedLead);
+                console.log("Successfully updated existing lead:", updatedLead.id);
+            } catch (error) {
+                console.error("Failed to update lead:", error);
+            }
             return;
         }
         
@@ -131,6 +155,7 @@ async function processLeadAsync(text: string, senderName: string): Promise<void>
             claimNumber: parsedData.claimNumber || "Claim number not specified",
             claimCompany: parsedData.claimCompany || "Insurance company not specified",
             nextSetDate: parsedData.nextSetDate,
+            lastModified: now,
             ...(parsedData.time && { time: parsedData.time }),
             ...(parsedData.claimInfo && { claimInfo: parsedData.claimInfo }),
         };
@@ -156,6 +181,17 @@ export async function POST(request: Request) {
         
         const body: GroupMeWebhookPayload = await request.json();
         const { text, name: senderName } = body;
+        
+        // Also log to the test endpoint for monitoring
+        try {
+            await fetch(`${request.url.replace('/groupme-webhook', '/groupme-webhook-test')}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+        } catch (logError) {
+            console.warn('Failed to log to test endpoint:', logError);
+        }
         
         // Log message details
         console.log(`[GroupMe Webhook] Sender: ${senderName}, Text: ${text?.substring(0, 100)}${text?.length > 100 ? '...' : ''}`);

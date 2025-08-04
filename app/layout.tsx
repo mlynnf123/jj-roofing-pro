@@ -3,7 +3,7 @@ import "./globals.css";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "JJ Roofing Pros",
+  title: "J&J Roofing Pros",
   description: "A full-stack application to manage roofing leads with an interactive Kanban board and AI-powered lead parsing using the Gemini API and Next.js.",
 };
 

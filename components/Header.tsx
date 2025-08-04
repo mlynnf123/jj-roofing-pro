@@ -22,11 +22,11 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onAddLead, currentPage, onNav
           <Image 
             src="/Austin, TX.png" 
             alt="JJ Roofing Logo" 
-            width={60} 
-            height={60}
+            width={80} 
+            height={80}
             className="object-contain"
           />
-          <h1 className="text-xl lg:text-2xl font-bold tracking-tight">JJ Roofing Pros</h1>
+          <h1 className="text-xl lg:text-2xl font-light tracking-tight">J&J Roofing Pros</h1>
         </div>
         <button
           onClick={onAddLead}

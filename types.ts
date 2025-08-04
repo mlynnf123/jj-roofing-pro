@@ -118,6 +118,7 @@ export interface Lead {
   timestamp: string; // ISO string of creation date
   stage: LeadStage;
   lastStageUpdateTimestamp: string; // ISO string of when the stage was last updated
+  lastModified?: string; // ISO string of last modification date
   documents?: LeadDocument[];
   contract?: ContractDetails;
 }
